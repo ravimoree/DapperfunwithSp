@@ -1,0 +1,124 @@
+﻿@model DapperfunwithSp.Model.Employee
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit</h2>
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <input type="hidden" name="Employee_Id" id="Employee_Id" value="@Model.Employee_Id" />
+        <div class="form-group">
+            <label>Fname</label>
+            <input name="Name" id="Name" type="text" value="@Model.Name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input name="Email" id="Email" type="text" value="@Model.Email" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input name="Password" id="Password" type="text" value="@Model.Password" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Gender</label>
+            @if (Model.Gender == "Male")
+            {
+                <input id="Gender" name="Gender" value="Male" type="radio" checked="checked"> @Html.Label("Male")
+                <input id="Gender" name="Gender" value="Female" type="radio"> @Html.Label("feMale")
+            }
+            else
+            {
+                <input id="Gender" name="Gender" value="Male" type="radio" checked="checked"> @Html.Label("Male")
+                <input id="Gender" name="Gender" value="Female" type="radio" checked="checked"> @Html.Label("feMale")
+            }
+        </div>
+
+        <div class="form-group">
+            <label>Salary</label>
+            <input name="Salary" id="Salary" type="text" value="@Model.Salary" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>CountryName</label>
+            @*<select class="form-control" id="Country_Id" name="Country_Id"   >
+                <option value=""> </option>
+                </select>*@
+            @Html.DropDownList("Country_Id", new SelectList(string.Empty, "value", "text"), new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>StateNme</label>
+            @*<select class="form-control" id="State_id" name="State_id">
+                    <option value=""></option>
+                </select>*@
+            @Html.DropDownList("State_id", new SelectList(string.Empty, "value", "text"), "", new { @class = "form-control" })
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        var cid = @Model.Country_Id;
+        var sid =@Model.State_id;
+        $(function () {
+            $.ajax({
+                url: "/Default/getcountery",
+                dataType: "json",
+                success: function (data) {
+                  //  console.log(data);
+                    $.each(data, function (index, value) {
+                        $("#Country_Id").append("<option value='" + value.Country_Id + "'>" + value.CountryName + "</option>");
+                    });
+                    $("#Country_Id").val(cid);
+                }
+            });
+            $.ajax({
+                url: "/Default/getstate",
+                type: "POST",
+                datatype: "Json",
+                data: { Country_id: cid },
+                success: function (data) {
+                   // console.log(data);
+                    $.each(data, function (index, value) {
+                        $('#State_id').append("<option value='" + value.State_id + "'>" + value.StateNme + "</option>");
+                    });
+                    $("#State_id").val(sid);
+                }
+            });
+            $("#Country_Id").change(function () {
+                $('#State_id').empty();
+                var ggg = $(this).find(":selected").val();
+                $.ajax({
+                    url: "/Default/getstate",
+                    type: "POST",
+                    datatype: "Json",
+                    data: { Country_id: ggg },
+                    success: function (data) {
+                     //   console.log(data);
+                        $.each(data, function (index, value) {
+                            $('#State_id').append("<option value='" + value.State_id + "'>" + value.StateNme + "</option>");
+                        });
+                        $("#State_id").val(sid);
+                    }
+                });
+            });
+        });
+    </script>
+}

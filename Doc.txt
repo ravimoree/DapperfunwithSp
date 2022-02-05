@@ -1,0 +1,5 @@
+In this project used
+	- Bussnes logic
+	- server side pagtion
+	- Dapper class
+

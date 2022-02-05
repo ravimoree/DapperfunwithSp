@@ -1,0 +1,126 @@
+﻿@model DapperfunwithSp.Model.Employee
+
+@{
+    ViewBag.Title = "Create";
+    <style>
+        .field-icon {
+            float: right;
+            margin-left: -25px;
+            margin-top: -25px;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+}
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+<h2>Create</h2>
+
+@using (Html.BeginForm())
+{
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="control-label col-md-2">Fname</label>
+            <div class="col-md-10">
+                <input name="Name" id="Name" type="text" class="form-control" placeholder="Enter name" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Email</label>
+            <div class="col-md-10">
+                <input name="Email" id="Email" type="email" class="form-control" placeholder="Enter Email" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Password</label>
+            <div class="col-md-10">
+                <input name="Password" id="Password" type="password" class="form-control" placeholder="Enter password" required />
+                <span toggle="#Password" class="fa fa-fw fa-eye field-icon toggle-password" style="margin-right: 71%;"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Gender</label>
+            <div class="col-md-10">
+                Male
+                <input id="Gender" name="Gender" value="Male" type="radio">
+                Female
+                <input id="Gender" name="Gender" value="Female" type="radio">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Salary</label>
+            <div class="col-md-10">
+                <input name="Salary" id="Salary" type="text" class="form-control" placeholder="Enter Salary" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">CountryName</label>
+            <div class="col-md-10">
+                <select class="form-control" id="Country_Id" name="Country_Id">
+                    <option value="">Please select country</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">StateNme</label>
+            <div class="col-md-10">
+                <select class="form-control" id="State_id" name="State_id">
+                    <option value="">Please select state</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Create" class="btn btn-default" />
+        </div>
+    </div>
+
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@*<script src="~/Scripts/jquery-3.4.1.min.js"></script>*@
+@section Scripts {
+    <script>
+        $(".toggle-password").click(function () {
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if (input.attr("type") == "password") {
+                input.attr("type", "text");
+            } else {
+                input.attr("type", "password");
+            }
+        });
+        $(function () {
+            $.ajax({
+                url: "/Default/getcountery",
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (index, value) {
+                        $("#Country_Id").append("<option value='" + value.Country_Id + "'>" + value.CountryName + "</option>");
+                        console.log(data);
+                    });
+                }
+
+            });
+
+            $("#Country_Id").change(function () {
+                $('#State_id').empty();
+                var ggg = $('#Country_Id').val();
+             //   console.log(ggg);
+                $.ajax({
+                    url: "/Default/getstate",
+                    type: "POST",
+                    datatype: "Json",
+                    data: { Country_id: ggg },
+                    success: function (data) {
+                        console.log(data);
+                        $.each(data, function (index, value) {
+                            $('#State_id').append("<option value='" + value.State_id + "'>" + value.StateNme + "</option>");
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+    }
